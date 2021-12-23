@@ -1,0 +1,20 @@
+
+
+options:
+*colour
+*size
+*speed
+*smooth
+
+
+
+modes:
+*constant x, volume y
+*constant x, pithc y
+*volume x, pitch y
+(or just allow both axis to be controlled by whatever, constant, volume, pitch are options)
+*tank controls???
+
+
+
+spctrograph maybe?

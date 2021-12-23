@@ -2,6 +2,11 @@ import pygame, pygame.image, pygame.display, pygame.time, pygame.draw
 import config
 from stylus import Stylus
 import variables
+import pyaudio
+import math
+import struct
+import myPyAudioStuff #In importing it starts the stream TO DO - is this bad practise and should move the starting to this file?
+
 
 
 
@@ -33,7 +38,20 @@ def main():
     while variables.gameIsRunning:
         timeSinceLastRender = GameClock.tick()
 
-        # update the position of the stylus and draw onto the canvas
+        #Doing pyaudio stuff every frame and updating y of the stylus
+        pyaudioData = myPyAudioStuff.stream.read(config.audioChunkSize) #TODO - make it take a variable amount so it can't fall behind
+        currentrmsValue = myPyAudioStuff.rms(pyaudioData)
+        currentDecibelValue = 20 * math.log10(currentrmsValue)
+        if currentDecibelValue >= config.minDecibelToMove:
+            stylus.pos.y = 100 - (((currentDecibelValue-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove y=100, at minDecibelToMove+decibelsToCross, y=0
+            print("\n this is the current stylus.y.pos")
+            print(stylus.pos.y)
+        else:
+            stylus.pos.y = 100 #100 is bottom of screen
+            print("nah")
+        
+        
+        # update the position of the stylus
         stylus.update(timeSinceLastRender)
         
         # put images on screen
@@ -68,3 +86,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    myPyAudioStuff.stream.stop_stream()
+    myPyAudioStuff.stream.close()

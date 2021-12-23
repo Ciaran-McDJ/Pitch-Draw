@@ -8,7 +8,7 @@ class Stylus():
     defaultScreen: pygame.Surface = variables.artDisplayedScreen #TO DO - this probably won't work, figure out how it works
     
     def __init__(self) -> None:
-        self.pos:Vector2 = Vector2(0,50) #The centers of the stylus
+        self.pos:Vector2 = Vector2(0,100) #The centers of the stylus
         self.size = config.stylusSize
         self.image = transform.scale(pygame.image.load(config.stylusImage),(round(config.UnitLengthToPixels(self.size)),round(config.UnitLengthToPixels(self.size))))
         self.paintColour = config.defaultPaintColour
