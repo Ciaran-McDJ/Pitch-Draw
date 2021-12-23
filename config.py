@@ -1,6 +1,9 @@
 import pygame
 import math
 
+
+#All other functions will be in 'variables' so can use things from both 'config' and 'variables' (can't import 'variables' here without loop)
+
 def pixelsToUnitLength(pixels:int):
     return pixels/swidth*100
 def UnitLengthToPixels(UnitLength):
@@ -8,10 +11,11 @@ def UnitLengthToPixels(UnitLength):
 
 def pytheorem(x:int, y:int):
     return math.sqrt(x**2 + y**2)
+    
 
 # inputs
-swidth = 500 # only values in pixels
-sheight = 500 # only values in pixels
+swidth = 800 # only values in pixels
+sheight = 800 # only values in pixels
 infoScreenWidth = 0.5 # in percent of swidth
 
 
@@ -22,7 +26,7 @@ stylusSize = 5
 """diameter"""
 stylusSpeed = 0.03 
 """percent per milisecond only in the x direction, y is non linear"""
-defaultPaintColour = "red"
+defaultPaintColour = "Red"
 
 #Audio Stuff
 minDecibelToMove = -45 

@@ -6,7 +6,7 @@ import pyaudio
 import math
 import struct
 import myPyAudioStuff #In importing it starts the stream TO DO - is this bad practise and should move the starting to this file?
-
+import optionsScreen
 
 
 
@@ -44,15 +44,18 @@ def main():
         currentDecibelValue = 20 * math.log10(currentrmsValue)
         if currentDecibelValue >= config.minDecibelToMove:
             stylus.pos.y = 100 - (((currentDecibelValue-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove y=100, at minDecibelToMove+decibelsToCross, y=0
-            print("\n this is the current stylus.y.pos")
-            print(stylus.pos.y)
+            # print("\n this is the current stylus.y.pos")
+            # print(stylus.pos.y)
         else:
             stylus.pos.y = 100 #100 is bottom of screen
-            print("nah")
         
         
         # update the position of the stylus
         stylus.update(timeSinceLastRender)
+        
+        #update the info screen (might not need to do this every frame... maybe only when restarting? Oh no when data is being put in?)
+        variables.optionsScreen.fill("black")
+        optionsScreen.updateOptionsScreen()
         
         # put images on screen
         
@@ -78,10 +81,12 @@ def main():
                 # change the value to False, to exit the main loop
                 variables.gameIsRunning = False
             if event.type == pygame.KEYDOWN:
-                if event.unicode == "w":
-                    stylus.pos.y -= 2
-                if event.unicode == "s":
-                    stylus.pos.y += 2
+                #Currently use input to control colour, plan on changing this in the future
+                newColour = optionsScreen.keepTrackOfColour(event.unicode)
+                if newColour != None:
+                    #So if 'return' was pressed
+                    stylus.paintColour = newColour
+                
                     
 
 if __name__ == "__main__":
