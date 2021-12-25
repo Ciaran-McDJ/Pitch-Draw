@@ -6,7 +6,8 @@ import pyaudio
 import math
 import struct
 import myPyAudioStuff #In importing it starts the stream TO DO - is this bad practise and should move the starting to this file?
-import optionsScreen
+import controlPanel
+import configScreen
 
 
 
@@ -42,7 +43,7 @@ def main():
         pyaudioData = myPyAudioStuff.stream.read(config.audioChunkSize) #TODO - make it take a variable amount so it can't fall behind
         currentrmsValue = myPyAudioStuff.rms(pyaudioData)
         currentDecibelValue = 20 * math.log10(currentrmsValue)
-        if currentDecibelValue >= config.minDecibelToMove:
+        if currentDecibelValue >= config.minDecibelToMove: #TODO - currently crashes if mic is off - fix that
             stylus.pos.y = 100 - (((currentDecibelValue-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove y=100, at minDecibelToMove+decibelsToCross, y=0
             # print("\n this is the current stylus.y.pos")
             # print(stylus.pos.y)
@@ -55,8 +56,10 @@ def main():
         
         #update the info screen (might not need to do this every frame... maybe only when restarting? Oh no when data is being put in?)
         variables.optionsScreen.fill("black")
-        optionsScreen.updateOptionsScreen()
-        
+        if controlPanel.isActive == True:
+            controlPanel.updateControlPanel()
+        elif configScreen.isActive == True:
+            print("configScreenTime")
         # put images on screen
         
         
@@ -82,7 +85,7 @@ def main():
                 variables.gameIsRunning = False
             if event.type == pygame.KEYDOWN:
                 #Currently use input to control colour, plan on changing this in the future
-                newColour = optionsScreen.keepTrackOfColour(event.unicode)
+                newColour = controlPanel.keepTrackOfColour(event.unicode)
                 if newColour != None:
                     #So if 'return' was pressed
                     stylus.paintColour = newColour

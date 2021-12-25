@@ -2,11 +2,12 @@ import pygame
 import variables
 import config
 
-#This module will be for drwing onto the config screen and controlling data on it
+#This module will be for drawing onto the control panel and controlling data on it
 
 currentColourInput = ""
+isActive = True
 
-def updateOptionsScreen():
+def updateControlPanel():
     """Redraws the info screen"""
     variables.drawTextOnSurface(4,pygame.Vector2(5,2),"Type a colour (backspace clears it)","blue")
     variables.drawTextOnSurface(4,pygame.Vector2(5,6),"and press enter to change the colour,","blue")

@@ -17,4 +17,9 @@ modes:
 
 
 
+Conig/option screen
+controlPanel - main one - controls size & colour
+    configScreen - things that should have restart for activation
+
+
 spctrograph maybe?

@@ -27,3 +27,6 @@ def drawTextOnSurface(height:float, pos:pygame.Vector2, text:str, colour:str, ba
     surfaceToBlitOn.blit(textSurface,((config.UnitLengthToPixels(pos.x)/2),config.UnitLengthToPixels(pos.y))) #Width is divided by 2 because info screen is half of regular screen
     # surfaceToBlitOn.blit(textSurface,(config.UnitLengthToPixels((pos.x)/2)-(textSurface.get_width()*0.5),config.UnitLengthToPixels(pos.y)-(textSurface.get_height()*0.5))) #Width is divided by 2 because info screen is half of regular screen #This version was to input the center of the text, not top left corner
     return textSurface
+
+def makeTextBox(height:float, pos:pygame.Vector2, text:str, colour:str, backgroundColour:str=None, font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen, validInputs:str="*"):
+   """draws the text box""" 
