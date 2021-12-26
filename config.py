@@ -37,6 +37,9 @@ audioChunkSize = 2000;
 """The amount of bytes it takes per frame, too low and can fall behind and jumpy. Higher smoother but lower frame rate (waits for audio)"""
 
 
-
+#TextBox Stuff
+textBoxPaddingOnSide = 1 #percent of screen padding on each side
+notActiveTextBoxBackgroundColour = None
+activeTextBoxBackgroundColour = "light gray"
 
 

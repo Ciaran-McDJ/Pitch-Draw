@@ -83,12 +83,18 @@ def main():
             if event.type == pygame.QUIT:
                 # change the value to False, to exit the main loop
                 variables.gameIsRunning = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: #The left mouse button
+                    print("left click")
+                    #If pressed on position of any box, activate that box
+                    #If key pressed pass it to active box
             if event.type == pygame.KEYDOWN:
                 #Currently use input to control colour, plan on changing this in the future
                 newColour = controlPanel.keepTrackOfColour(event.unicode)
                 if newColour != None:
                     #So if 'return' was pressed
                     stylus.paintColour = newColour
+
                 
                     
 

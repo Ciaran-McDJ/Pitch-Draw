@@ -18,13 +18,12 @@ def updateControlPanel():
     
 def keepTrackOfColour(unicodeCharacter):
     """Keeps track of colour, if 'return' is pressed returns the input colour"""
-    global currentColourInput #TODO ask Tadhg about this... is this available in other files now? That's bad if it is so how do i change?
+    global currentColourInput
     if unicodeCharacter == "\r":
         colour_to_use = currentColourInput
         currentColourInput = ""
         return colour_to_use
     elif unicodeCharacter == "\x08":
-        currentColourInput = ""
-        print("it should be wiped?")
+        currentColourInput = currentColourInput[:-1] #splices it so it removes the last character
     else:
         currentColourInput += unicodeCharacter

@@ -28,5 +28,40 @@ def drawTextOnSurface(height:float, pos:pygame.Vector2, text:str, colour:str, ba
     # surfaceToBlitOn.blit(textSurface,(config.UnitLengthToPixels((pos.x)/2)-(textSurface.get_width()*0.5),config.UnitLengthToPixels(pos.y)-(textSurface.get_height()*0.5))) #Width is divided by 2 because info screen is half of regular screen #This version was to input the center of the text, not top left corner
     return textSurface
 
-def makeTextBox(height:float, pos:pygame.Vector2, text:str, colour:str, backgroundColour:str=None, font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen, validInputs:str="*"):
-   """draws the text box""" 
+class TextBox():
+    """Class where each object is a textbox that can be drawn and get input"""
+    
+    activeTextBox = None
+    textBoxes = []
+    
+    def __init__(self, submitFunc:"function", height:float, width:float, pos:pygame.Vector2, text:str, colour:str, font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen, validInputs:str="*"):
+        #Note that there will be some padding between the border and the text, the height represents the height of the box, not the height of the text
+        #(this probably doesn't belong in __init__)Note that the box has a max width, if type more than that then the user won't be able to see it, TODO - implement side scrolling maybe? Not sure how that would work
+        self.submitFunc = submitFunc
+        self.height = height
+        self.width = width
+        self.leftTopPos = pos
+        self.bottomRightPos = pygame.Vector2(pos.x+width,pos.y+height)
+        self.text = text
+        self.colour = colour
+        self.font = font
+        self.surfaceToBlitOn = surfaceToBlitOn
+        self.validInputs = validInputs
+        
+        self.isactiveBox = False
+        TextBox.textBoxes += self
+    
+    def makeActiveTextBox(self): #TODO - Note has not been tested, should check
+        #Makes the old active box no loonger active and makes
+        if TextBox.activeTextBox !=None:
+            TextBox.activeTextBox.isactiveBox = False
+        TextBox.activeTextBox = self
+        self.isactiveBox = True
+    
+    # def drawMe(self):
+    #     if self.isactiveBox == True:
+    #         drawTextOnSurface()
+        
+    
+    
+        

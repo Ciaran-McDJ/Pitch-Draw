@@ -23,3 +23,13 @@ controlPanel - main one - controls size & colour
 
 
 spctrograph maybe?
+
+
+
+
+TEMP
+for the textbox:
+*I need positions of all boxes for clicking to switch to active box
+    want to iterate over it and check if position is within range
+    if it is in range want to set it to the active box
+*I need stuff of active box so I can send it text
