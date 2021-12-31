@@ -29,7 +29,7 @@ def main():
     GameClock = pygame.time.Clock()
     myClocks.add(GameClock)
     stylus = Stylus()
-    
+    controlPanel.initiateTextBoxes(stylus)
     
     
     print("main is running")
@@ -43,16 +43,17 @@ def main():
         pyaudioData = myPyAudioStuff.stream.read(config.audioChunkSize) #TODO - make it take a variable amount so it can't fall behind
         currentrmsValue = myPyAudioStuff.rms(pyaudioData)
         currentDecibelValue = 20 * math.log10(currentrmsValue)
-        if currentDecibelValue >= config.minDecibelToMove: #TODO - currently crashes if mic is off - fix that
-            stylus.pos.y = 100 - (((currentDecibelValue-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove y=100, at minDecibelToMove+decibelsToCross, y=0
-            # print("\n this is the current stylus.y.pos")
-            # print(stylus.pos.y)
-        else:
-            stylus.pos.y = 100 #100 is bottom of screen
+        # Now doing this in stylus' update function, can delete this section
+        # if currentDecibelValue >= config.minDecibelToMove: #TODO - currently crashes if mic is off - fix that
+        #     stylus.pos.y = 100 - (((currentDecibelValue-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove y=100, at minDecibelToMove+decibelsToCross, y=0
+        #     # print("\n this is the current stylus.y.pos")
+        #     # print(stylus.pos.y)
+        # else:
+        #     stylus.pos.y = 100 #100 is bottom of screen
         
         
         # update the position of the stylus
-        stylus.update(timeSinceLastRender)
+        stylus.update(timeSinceLastRender,currentDecibelValue,0.00000)
         
         #update the info screen (might not need to do this every frame... maybe only when restarting? Oh no when data is being put in?)
         variables.optionsScreen.fill("black")
@@ -79,21 +80,32 @@ def main():
         for event in pygame.event.get():
             
             # only do something if the event is of type QUIT
-            print(event)
+            # print(event)
             if event.type == pygame.QUIT:
                 # change the value to False, to exit the main loop
                 variables.gameIsRunning = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: #The left mouse button
-                    print("left click")
-                    #If pressed on position of any box, activate that box
+                    #If pressed on position of any box, activate that box                    
+                    for individualBox in variables.TextBox.textBoxes:
+                        # first part of if statement checking if x values allign, second part checking y values
+                        if (config.UnitLengthToPixels(individualBox.leftTopPos.x)+config.swidth < event.pos[0] < config.UnitLengthToPixels(individualBox.bottomRightPos.x)+config.swidth) and (config.UnitLengthToPixels(individualBox.leftTopPos.y) < event.pos[1] < config.UnitLengthToPixels(individualBox.bottomRightPos.y)):  #Note, not alowed to reconfigure screen, this dependant on options screen to the right and only textboxes in options screen
+                            print("box is being pressed!")
+                            individualBox.makeActiveTextBox()
                     #If key pressed pass it to active box
             if event.type == pygame.KEYDOWN:
                 #Currently use input to control colour, plan on changing this in the future
-                newColour = controlPanel.keepTrackOfColour(event.unicode)
-                if newColour != None:
-                    #So if 'return' was pressed
-                    stylus.paintColour = newColour
+                if variables.TextBox.activeTextBox != None: #Only check if there is an active text box to avoid errors
+                    
+                    if event.unicode in variables.TextBox.activeTextBox.validInputs or event.unicode == "\r" or event.unicode == "\x08":
+                        variables.TextBox.activeTextBox.giveInput(event.unicode)
+                        
+                        
+                        
+                # newColour = controlPanel.keepTrackOfColour(event.unicode)
+                # if newColour != None:
+                #     #So if 'return' was pressed
+                #     stylus.paintColour = newColour
 
                 
                     

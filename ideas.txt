@@ -17,6 +17,10 @@ modes:
 
 
 
+maybe add option for volume or pitch to control other things like paint brush size or colour (or speed... but probablt not speed)
+
+
+
 Conig/option screen
 controlPanel - main one - controls size & colour
     configScreen - things that should have restart for activation

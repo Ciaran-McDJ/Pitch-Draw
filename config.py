@@ -1,5 +1,6 @@
 import pygame
 import math
+from enum import Enum
 
 
 #All other functions will be in 'variables' so can use things from both 'config' and 'variables' (can't import 'variables' here without loop)
@@ -15,7 +16,6 @@ def pytheorem(x:int, y:int):
 
 # inputs
 swidth = 800 # only values in pixels
-sheight = 800 # only values in pixels
 infoScreenWidth = 0.5 # in percent of swidth
 
 
@@ -26,7 +26,7 @@ stylusSize = 5
 """diameter"""
 stylusSpeed = 0.03 
 """percent per milisecond only in the x direction, y is non linear"""
-defaultPaintColour = "Red"
+defaultPaintColour = "red"
 
 #Audio Stuff
 minDecibelToMove = -45 
@@ -38,8 +38,28 @@ audioChunkSize = 2000;
 
 
 #TextBox Stuff
-textBoxPaddingOnSide = 1 #percent of screen padding on each side
+textBoxPaddingOnSide = 0.3 #percent of screen padding on each side (the border thickness)
+textBoxSpaceBetweenTextAndBorder = 0.3
 notActiveTextBoxBackgroundColour = None
 activeTextBoxBackgroundColour = "light gray"
+textBoxBorderColour = "red"
 
 
+#Axis Controls
+class axisControls(Enum):
+    """enum with 3 values, each of which is a type of input for an axis, possibilities are linearTime, pitch, and volume"""
+    
+    linearTime = "linearTime"
+    pitch = "pitch"
+    volume = "volume"
+
+xaxisInput = axisControls.linearTime
+yaxisInput = axisControls.volume
+xaxisSmoothness = 0.0 #Value between 0 and 1, 0 no effect, 1 is no movement at all (is slowing for constant time)
+yaxisSmoothness = 0.0
+
+
+
+
+    
+    
