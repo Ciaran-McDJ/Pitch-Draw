@@ -44,6 +44,11 @@ notActiveTextBoxBackgroundColour = None
 activeTextBoxBackgroundColour = "light gray"
 textBoxBorderColour = "red"
 
+buttonPaddingOnSide = 0.3 #percent of screen padding on each side (the border thickness)
+buttonSpaceBetweenTextAndBorder = 0.3
+notActiveButtonBackgroundColour = None
+activeButtonBackgroundColour = "light green"
+buttonBorderColour = "yellow"
 
 #Axis Controls
 class axisControls(Enum):

@@ -17,11 +17,11 @@ modes:
 
 
 
-maybe add option for volume or pitch to control other things like paint brush size or colour (or speed... but probablt not speed)
+maybe add option for volume or pitch to control other things like paint brush size or colour (or speed... but probably not speed)
 
 
 
-Conig/option screen
+Config/option screen
 controlPanel - main one - controls size & colour
     configScreen - things that should have restart for activation
 
@@ -37,3 +37,5 @@ for the textbox:
     want to iterate over it and check if position is within range
     if it is in range want to set it to the active box
 *I need stuff of active box so I can send it text
+
+should I change how it's structured so I can make a button work the same way? Want a way to group some together so only one is active at a time...
