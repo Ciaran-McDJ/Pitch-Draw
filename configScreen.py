@@ -1,6 +1,7 @@
 import pygame
 import variables
 import config
+#Currently not used
 
 #This module will be for drawing onto the control panel and controlling data on it
 

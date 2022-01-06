@@ -1,30 +1,47 @@
-import pygame, pygame.font, pygame.draw
+import typing
+import pygame, pygame.font, pygame.draw, pygame.display
 import config
+
+
 
 # define a variable to control the main loop
 gameIsRunning = True
-
 
 # Create the main screen
 mainScreen: pygame.Surface = pygame.display.set_mode((round(config.swidth*(1+config.infoScreenWidth)),config.swidth))
 
 canvasScreen: pygame.Surface = pygame.Surface((config.swidth,config.swidth)) #This one isn't displayed to the user, just a buffer screen
 canvasScreen.fill("white")
-# mainScreen.subsurface((0,0,config.swidth,config.sheight)) # To delete
 
 artDisplayedScreen: pygame.Surface = mainScreen.subsurface((0,0,config.swidth,config.swidth))
 optionsScreen: pygame.Surface = mainScreen.subsurface((config.swidth,0,config.swidth*config.infoScreenWidth,config.swidth))
 
 
+#Values for the stylus that other functions need access to
+stylusSize:float = config.stylusSize
+stylusColour:str = config.defaultPaintColour
 
-# Functions
+#Variable to hold the active side screen
+activeSideScreen = None 
+"""Whenever switching screens run cleanup on the current one, replace it, and run init on the new one"""
+
+# Variables for axes
+xaxisSmoothness = 0.0 #Value between 0 and 1, 0 no effect, 1 is no movement at all (is slowing for constant time)
+yaxisSmoothness = 0.0
+
+
+xaxisInput:config.axisControls = config.axisControls.linearTime
+yaxisInput:config.axisControls = config.axisControls.volume
+
+
+# General Functions
 
 def drawTextOnSurface(height:float, pos:pygame.Vector2, text:str, colour:str, backgroundColour:str=None, font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen):
-    """draws text onto a surface, takes in percent of optionsScreen as arguments (100 is bottom, 100 is right edge. values are not centers, top and left edges)
+    """draws text onto a surface, takes in unit length as arguments (100 is bottom, 50 is right edge. values are not centers, top and left edges)
     Note: It may not work with any screen other than the options screen"""
     fontObject = pygame.font.Font(font, round(config.UnitLengthToPixels(height)))
     textSurface = fontObject.render(text,False,colour,backgroundColour)
-    surfaceToBlitOn.blit(textSurface,((config.UnitLengthToPixels(pos.x)/2),config.UnitLengthToPixels(pos.y))) #Width is divided by 2 because info screen is half of regular screen
+    surfaceToBlitOn.blit(textSurface,((config.UnitLengthToPixels(pos.x)),config.UnitLengthToPixels(pos.y)))
     # surfaceToBlitOn.blit(textSurface,(config.UnitLengthToPixels((pos.x)/2)-(textSurface.get_width()*0.5),config.UnitLengthToPixels(pos.y)-(textSurface.get_height()*0.5))) #Width is divided by 2 because info screen is half of regular screen #This version was to input the center of the text, not top left corner
     return textSurface
 
@@ -57,7 +74,7 @@ def drawTextInBox(height:float, width:float, leftTopPos:pygame.Vector2, text:str
     #Draw text TODO - why is it gross? Spacing of drawTextOnSurface seems weird (I think just blitting text with pygame) - make it look nice anyway
     drawTextOnSurface(
         height=height-2*spaceBetweenTextAndBorder,
-        pos=pygame.Vector2((leftTopPos.x+spaceBetweenTextAndBorder)*2,leftTopPos.y+spaceBetweenTextAndBorder), #Note I have to multiply by 2 cause I'm not consistent with my values :(
+        pos=pygame.Vector2(leftTopPos.x+spaceBetweenTextAndBorder,leftTopPos.y+spaceBetweenTextAndBorder),
         text=text,
         colour=textColour
     )
@@ -68,9 +85,8 @@ class TextBox():
     """Class where each object is a textbox that can be drawn and get input"""
     
     activeTextBox = None
-    textBoxes = []
     
-    def __init__(self, submitFunc:"function", height:float, width:float, pos:pygame.Vector2, textColour:str, font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen, validInputs:str="*", initialText:str=""):
+    def __init__(self, submitFunc:"function", height:float, width:float, pos:pygame.Vector2, textColour:str, listOfTextBoxesToAddSelfTo:list, font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen, validInputs:str="*", initialText:str=""):
         #Note that there will be some padding between the border and the text, the height represents the height of the box, not the height of the text
         #(this probably doesn't belong in __init__)Note that the box has a max width, if type more than that then the user won't be able to see it, TODO - implement side scrolling maybe? Not sure how that would work
         self.submitFunc = submitFunc #Only argument is the self.currentText
@@ -86,7 +102,8 @@ class TextBox():
         self.currentText = initialText
         
         self.isactiveBox = False
-        TextBox.textBoxes.append(self)
+        listOfTextBoxesToAddSelfTo.append(self)
+        self.referenceToListOfTextBoxesInThisScreen = listOfTextBoxesToAddSelfTo
     
     def makeActiveTextBox(self): #TODO - Note has not been tested, should check
         #Makes the old active box no loonger active and makes
@@ -131,7 +148,7 @@ class TextBox():
         
 class Button(): #Note if I were to rewrite this program this and textbox would be more modular and share more code, but since I'm almost done I just copy pasted a bunch
     """class where each object is one button that can draw itself and does something when pressed. Note after creation each button must be added to a mutuallyExclusiveButtons object to be rendered and checked. pressFunc needs to take no args, and call makeActiveButton on it's mutuallyExclusiveButtons object"""
-    def __init__(self, pressFunc:"function", height:float, width:float, pos:pygame.Vector2, textColour:str, font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen, text:str=""):
+    def __init__(self, pressFunc:"function", height:float, width:float, pos:pygame.Vector2, textColour:str, mutuallyExclusiveButtonsToAddSelfTo:"mutuallyExclusiveButtons", font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen, text:str=""):
         #Note that there will be some padding between the border and the text, the height represents the height of the box, not the height of the text
         #(this probably doesn't belong in __init__)Note that the box has a max width, if type more than that then the user won't be able to see it, TODO - implement side scrolling maybe? Not sure how that would work
         self.pressFunc = pressFunc #func needs to have no arguments and call makeActiveButton on it's mutuallyExclusiveButtons object
@@ -146,6 +163,8 @@ class Button(): #Note if I were to rewrite this program this and textbox would b
         self.text = text
         
         self.isactiveBox = False
+        mutuallyExclusiveButtonsToAddSelfTo.myButtons.append(self)
+        self.referenceToMutuallyExclusiveButtons = mutuallyExclusiveButtonsToAddSelfTo
     
     def drawMe(self):
         if self.isactiveBox == True:
@@ -172,18 +191,24 @@ class Button(): #Note if I were to rewrite this program this and textbox would b
                 backgroundColour = config.notActiveButtonBackgroundColour,
                 spaceBetweenTextAndBorder = config.buttonSpaceBetweenTextAndBorder
             )
+    
+    def makeActiveButton(self):
+        if self.referenceToMutuallyExclusiveButtons.activeButton != None:
+            self.referenceToMutuallyExclusiveButtons.activeButton.isactiveBox = False
+        self.isactiveBox = True
+        self.referenceToMutuallyExclusiveButtons.activeButton = self
 
 class mutuallyExclusiveButtons():
     """class where each object holds a group of buttons where only one can be active at a time"""
     def __init__(self, currentActiveButton:Button = None):
-        self.myButtons = [] #TODO add type annotation to specify it's a list of Buttons
+        self.myButtons:typing.List[Button] = [] #TODO add type annotation to specify it's a list of Buttons
         self.activeButton = currentActiveButton
     
-    def makeActiveButton(self, newActiveButton:Button):
-        if self.activeButton != None:
-            self.activeButton = False
-        newActiveButton.isactiveBox = True
-        self.activeButton = newActiveButton
+    # def makeActiveButton(self, newActiveButton:Button):
+    #     if self.activeButton != None:
+    #         self.activeButton = False
+    #     newActiveButton.isactiveBox = True
+    #     self.activeButton = newActiveButton
         
     
         

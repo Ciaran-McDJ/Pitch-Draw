@@ -1,5 +1,6 @@
 import pygame
-import stylus
+import axisControlPanel
+from sideScreenSuperClass import SideScreenSuperClass
 import variables
 import config
 
@@ -83,52 +84,73 @@ COLOURS = ['snow', 'ghost white', 'white smoke', 'gainsboro', 'floral white', 'o
           'grey84', 'grey85', 'grey86', 'grey87', 'grey88', 'grey89', 'grey90', 'grey91', 'grey92',
           'grey93', 'grey94', 'grey95', 'grey97', 'grey98', 'grey99'] #unsure if this  is the right list
 
-currentColourInput = ""
-isActive = True
-
-def initiateTextBoxes(stylus:stylus.Stylus):
-    def testingBoxSubmit(input:str):
-        if input==None or input=="":
-            print("Oh no! I got None!")
-        else:
-            stylus.size = float(input)
-    testingBox = variables.TextBox(
-        submitFunc=testingBoxSubmit,
-        height=5,
-        width=40,
-        pos=pygame.Vector2(5,30),
-        textColour="blue",
-        validInputs="1234567890.",
-        initialText=str(stylus.size)
-    )
-
-
-    def colourInputBoxSubmit(input:str):
-        if input == None:
-            print("oopsie, the textbox didn't get anything when you pressed enter")
-        elif input not in COLOURS:
-            print("sorry, I don't recognize that name, please try a different colour")
-        else:
-            stylus.paintColour = input
-    colourInputBox = variables.TextBox(
-        submitFunc=colourInputBoxSubmit,
-        height=5,
-        width=40,
-        pos=pygame.Vector2(5,50),
-        textColour="blue",
-        validInputs="zxcvbnmasdfghjklqwertyuiopQWERTYUIOPASDFGHJKLZXCVBNM ",
-        initialText=str(stylus.paintColour)
-    )
-
-def updateControlPanel():
-    """Redraws the info screen"""
-    # variables.drawTextOnSurface(4,pygame.Vector2(5,2),"Type a colour (backspace clears it)","blue")
-    # variables.drawTextOnSurface(4,pygame.Vector2(5,6),"and press enter to change the colour,","blue")
-    # variables.drawTextOnSurface(4,pygame.Vector2(5,10),"make sure it's a valid colour or else","blue")
-    # variables.drawTextOnSurface(4,pygame.Vector2(5,20),"this is the colour input:","blue")
-    variables.drawTextOnSurface(4,pygame.Vector2(10,25),"paint brush size","blue")
-    variables.drawTextOnSurface(4,pygame.Vector2(10,45),"paint brush colour","blue")
+class MainControlPanel(SideScreenSuperClass):
+    """The original control panel for while-painting actions and has buttons to go to other more detailed panels"""
+    def __init__(self) -> None:
+        super().__init__()
+        self.controlPanelButtons = variables.mutuallyExclusiveButtons()
+        self.groupsOfMutuallyExclusiveButtons.append(self.controlPanelButtons)
     
-    for textBox in variables.TextBox.textBoxes:
-        textBox.drawMe()
+    def initiateScreen(self):
+        def stylusSizeBoxSubmit(input:str):
+            if input==None or input=="":
+                print("Oh no! I got None!")
+            else:
+                variables.stylusSize = float(input)
+        stylusSizeBox = variables.TextBox(
+            submitFunc=stylusSizeBoxSubmit,
+            height=5,
+            width=40,
+            pos=pygame.Vector2(5,30),
+            textColour="blue",
+            listOfTextBoxesToAddSelfTo=self.textBoxes,
+            validInputs="1234567890.",
+            initialText=str(variables.stylusSize)
+        )
+
+
+        def colourInputBoxSubmit(input:str):
+            if input == None:
+                print("oopsie, the textbox didn't get anything when you pressed enter")
+            elif input not in COLOURS:
+                print("sorry, I don't recognize that name, please try a different colour")
+            else:
+                variables.stylusColour = input
+        colourInputBox = variables.TextBox(
+            submitFunc=colourInputBoxSubmit,
+            height=5,
+            width=40,
+            pos=pygame.Vector2(5,50),
+            textColour="blue",
+            listOfTextBoxesToAddSelfTo=self.textBoxes,
+            validInputs="zxcvbnmasdfghjklqwertyuiopQWERTYUIOPASDFGHJKLZXCVBNM ",
+            initialText=str(variables.stylusColour)
+        )
+        
+        #Now the button
+        def onGoToAxisControlPanelButttonPressed():
+            self.cleanupScreen()
+            variables.activeSideScreen = axisControlPanel.AxisControlPanel() 
+            variables.activeSideScreen.initiateScreen()         
+        goToAxisControlPanelButtton = variables.Button(
+            pressFunc= onGoToAxisControlPanelButttonPressed,
+            height= 3,
+            width= 40,
+            pos= pygame.Vector2(5,90),
+            textColour= "yellow",
+            mutuallyExclusiveButtonsToAddSelfTo= self.controlPanelButtons,
+            text= "press me to change axis inputs"
+        )
+
+    
+    def update(self):
+        """Redraws the info screen"""
+        variables.drawTextOnSurface(4,pygame.Vector2(5,25),"paint brush size","blue")
+        variables.drawTextOnSurface(4,pygame.Vector2(5,45),"paint brush colour","blue")
+        
+        for textBox in self.textBoxes:
+            textBox.drawMe()
+        for oneGroupOfMutuallyExclusiveButtons in self.groupsOfMutuallyExclusiveButtons:
+            for button in oneGroupOfMutuallyExclusiveButtons.myButtons:
+                button.drawMe()
 

@@ -6,8 +6,9 @@ import pyaudio
 import math
 import struct
 import myPyAudioStuff #In importing it starts the stream TO DO - is this bad practise and should move the starting to this file?
-import controlPanel
+import mainControlPanel
 import configScreen
+import axisControlPanel
 
 
 
@@ -29,7 +30,9 @@ def main():
     GameClock = pygame.time.Clock()
     myClocks.add(GameClock)
     stylus = Stylus()
-    controlPanel.initiateTextBoxes(stylus)
+    
+    variables.activeSideScreen = mainControlPanel.MainControlPanel()
+    variables.activeSideScreen.initiateScreen()
     
     
     print("main is running")
@@ -57,11 +60,7 @@ def main():
         
         #update the info screen (might not need to do this every frame... maybe only when restarting? Oh no when data is being put in?)
         variables.optionsScreen.fill("black")
-        if controlPanel.isActive == True:
-            controlPanel.updateControlPanel()
-        elif configScreen.isActive == True:
-            print("configScreenTime")
-        # put images on screen
+        variables.activeSideScreen.update()
         
         
         variables.artDisplayedScreen.blit(variables.canvasScreen,(0,0))
@@ -87,25 +86,20 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: #The left mouse button
                     #If pressed on position of any box, activate that box                    
-                    for individualBox in variables.TextBox.textBoxes:
+                    for individualBox in variables.activeSideScreen.textBoxes:
                         # first part of if statement checking if x values allign, second part checking y values
                         if (config.UnitLengthToPixels(individualBox.leftTopPos.x)+config.swidth < event.pos[0] < config.UnitLengthToPixels(individualBox.bottomRightPos.x)+config.swidth) and (config.UnitLengthToPixels(individualBox.leftTopPos.y) < event.pos[1] < config.UnitLengthToPixels(individualBox.bottomRightPos.y)):  #Note, not alowed to reconfigure screen, this dependant on options screen to the right and only textboxes in options screen
-                            print("box is being pressed!")
                             individualBox.makeActiveTextBox()
-                    #If key pressed pass it to active box
+                    for oneGroupOfMutuallyExclusiveButtons in variables.activeSideScreen.groupsOfMutuallyExclusiveButtons: #Ideally I'd make a function to check if clicked in box but for now copy paste works :)
+                        for button in oneGroupOfMutuallyExclusiveButtons.myButtons:
+                            if (config.UnitLengthToPixels(button.leftTopPos.x)+config.swidth < event.pos[0] < config.UnitLengthToPixels(button.bottomRightPos.x)+config.swidth) and (config.UnitLengthToPixels(button.leftTopPos.y) < event.pos[1] < config.UnitLengthToPixels(button.bottomRightPos.y)):  #Note, not alowed to reconfigure screen, this dependant on options screen to the right and only textboxes in options screen
+                                button.makeActiveButton()
+                                button.pressFunc()
+            #If key pressed pass it to active box
             if event.type == pygame.KEYDOWN:
-                #Currently use input to control colour, plan on changing this in the future
                 if variables.TextBox.activeTextBox != None: #Only check if there is an active text box to avoid errors
-                    
                     if event.unicode in variables.TextBox.activeTextBox.validInputs or event.unicode == "\r" or event.unicode == "\x08":
                         variables.TextBox.activeTextBox.giveInput(event.unicode)
-                        
-                        
-                        
-                # newColour = controlPanel.keepTrackOfColour(event.unicode)
-                # if newColour != None:
-                #     #So if 'return' was pressed
-                #     stylus.paintColour = newColour
 
                 
                     

@@ -9,15 +9,21 @@ class Stylus():
     
     def __init__(self) -> None:
         self.pos:Vector2 = Vector2(0,100) #The centers of the stylus
-        self.size = config.stylusSize
-        self.image = transform.scale(pygame.image.load(config.stylusImage),(round(config.UnitLengthToPixels(self.size)),round(config.UnitLengthToPixels(self.size))))
-        self.paintColour = config.defaultPaintColour
+        self.size = config.stylusSize #Only used in self.draw to see if it's different than variables.stylusSize (to heck when the size changes)   - TODO - would be better if somehow variables could make a changeStylusSize function that deals with it all in one, not sure how to do that without import issues though...
+        self.image = transform.scale(pygame.image.load(config.stylusImage),(round(config.UnitLengthToPixels(variables.stylusSize)),round(config.UnitLengthToPixels(variables.stylusSize))))
+        # self.paintColour = config.defaultPaintColour #Now held in variables to avoid import issues
         
     def draw(self, screen:pygame.Surface = None):
         """draws the sprite on specified screen or the default screen if screen is not passed"""
         if screen is None:
             screen = self.defaultScreen
-        screen.blit(self.image, (config.UnitLengthToPixels(self.pos.x-self.size/2), config.UnitLengthToPixels(self.pos.y-self.size/2)))
+        
+        #optimization so I only change the image size if it changes
+        if variables.stylusSize != self.size:
+            self.size = variables.stylusSize
+            self.image = transform.scale(pygame.image.load(config.stylusImage),(round(config.UnitLengthToPixels(variables.stylusSize)),round(config.UnitLengthToPixels(variables.stylusSize))))
+
+        screen.blit(self.image, (config.UnitLengthToPixels(self.pos.x-variables.stylusSize/2), config.UnitLengthToPixels(self.pos.y-variables.stylusSize/2)))
         # pygame.draw.circle() maybe change to b a faded gray circle
     
     # def update(self, timeSinceLastRender:float):
@@ -32,26 +38,26 @@ class Stylus():
     def update(self, timeSinceLastRender:float, decibelVolume:float, pitch:float): #Not sure what pitch will be
         """update the stylus' position and draw on canvas"""
         #Update x-pos
-        if config.xaxisInput == config.axisControls.linearTime:  
+        if variables.xaxisInput == config.axisControls.linearTime:  
             self.pos.x = self.moveLinearTime(self.pos.x, config.stylusSpeed, timeSinceLastRender)
-        elif config.xaxisInput == config.axisControls.volume:
-            self.pos.x = self.moveVolume(self.pos.x, decibelVolume)
-        elif config.xaxisInput == config.axisControls.pitch:
-            self.pos.x = self.movePitch(self.pos.x, pitch)
+        elif variables.xaxisInput == config.axisControls.volume:
+            self.pos.x = self.moveVolume(self.pos.x, variables.xaxisSmoothness, decibelVolume)
+        elif variables.xaxisInput == config.axisControls.pitch:
+            self.pos.x = self.movePitch(self.pos.x, variables.xaxisSmoothness, pitch)
         else:
             print("uh, nothing is set to control the x-axis")
         
         #Update y-pos
-        if config.yaxisInput == config.axisControls.linearTime:  
+        if variables.yaxisInput == config.axisControls.linearTime:  
             self.pos.y = self.moveLinearTime(self.pos.y, config.stylusSpeed, timeSinceLastRender)
-        elif config.yaxisInput == config.axisControls.volume:
-            self.pos.y = self.moveVolume(self.pos.y, decibelVolume)
-        elif config.yaxisInput == config.axisControls.pitch:
-            self.pos.y = self.movePitch(self.pos.y, pitch)
+        elif variables.yaxisInput == config.axisControls.volume:
+            self.pos.y = self.moveVolume(self.pos.y, variables.yaxisSmoothness, decibelVolume)
+        elif variables.yaxisInput == config.axisControls.pitch:
+            self.pos.y = self.movePitch(self.pos.y, variables.yaxisSmoothness, pitch)
         else:
             print("uh, nothing is set to control the y-axis")
         
-        pygame.draw.circle(variables.canvasScreen, self.paintColour, config.UnitLengthToPixels(self.pos), config.UnitLengthToPixels(self.size/2))
+        pygame.draw.circle(variables.canvasScreen, variables.stylusColour, config.UnitLengthToPixels(self.pos), config.UnitLengthToPixels(variables.stylusSize/2))
 
     #TODO Also add smoothness factor into all 3 of these movement types (maybe not linear motion, then mention that somewhere)
     def moveLinearTime(self, valueToMove:float, speed:float, timeSinceLastRender:float):
@@ -61,14 +67,29 @@ class Stylus():
         return valueToMove #need to return it and reassign at calling since valueToMove loses it's connextion to the original variable passed
 
     
-    def moveVolume(self, valueToMove:float, decibelVolume:float):
+    def moveVolume(self, valueToMove:float, valueSmoothness:float, decibelVolume:float):
+        # if decibelVolume >= config.minDecibelToMove: #TODO - currently crashes if mic is off - fix that
+        #     valueToMove = 100 - (((decibelVolume-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove value=100, at minDecibelToMove+decibelsToCross, value=0
+        # else:
+        #     valueToMove = 100 #100 is bottom of screen
+        # return valueToMove
+    
         if decibelVolume >= config.minDecibelToMove: #TODO - currently crashes if mic is off - fix that
-            valueToMove = 100 - (((decibelVolume-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove value=100, at minDecibelToMove+decibelsToCross, value=0
+            expectedValueToMoveIfNoSmooth = 100 - (((decibelVolume-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove value=100, at minDecibelToMove+decibelsToCross, value=0
         else:
-            valueToMove = 100 #100 is bottom of screen
+            expectedValueToMoveIfNoSmooth = 100 #100 is bottom of screen
+        print("smoothness is: ", valueSmoothness)
+        print("expected xpos if no smoothness: ", valueToMove)
+        valueToMove = expectedValueToMoveIfNoSmooth*(1-valueSmoothness) + valueToMove*valueSmoothness #If smoothness not 0 this will make a difference weighting it towards where it already is to avoid jumpyness
+        print("actual new xpos: ", valueToMove)
+        
         return valueToMove
     
-    def movePitch(self, valueToMove:float, pitch):
+    def movePitch(self, valueToMove:float, valueSmoothness:float, pitch):
         print("This isn't implemented yet, sorryyyyyyy")
         return valueToMove
+    
+    
+    # def calcNewPosWithSmoothness(self, expectedDestinationWithoutSmoothness:float, currentPosition:float, Smoothness:float):
+    #     return expectedDestinationWithoutSmoothness*(1-)
         

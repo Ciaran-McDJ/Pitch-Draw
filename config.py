@@ -50,7 +50,9 @@ notActiveButtonBackgroundColour = None
 activeButtonBackgroundColour = "light green"
 buttonBorderColour = "yellow"
 
-#Axis Controls
+
+
+# Possible Axis Controls
 class axisControls(Enum):
     """enum with 3 values, each of which is a type of input for an axis, possibilities are linearTime, pitch, and volume"""
     
@@ -58,10 +60,6 @@ class axisControls(Enum):
     pitch = "pitch"
     volume = "volume"
 
-xaxisInput = axisControls.linearTime
-yaxisInput = axisControls.volume
-xaxisSmoothness = 0.0 #Value between 0 and 1, 0 no effect, 1 is no movement at all (is slowing for constant time)
-yaxisSmoothness = 0.0
 
 
 

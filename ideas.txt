@@ -38,4 +38,17 @@ for the textbox:
     if it is in range want to set it to the active box
 *I need stuff of active box so I can send it text
 
-should I change how it's structured so I can make a button work the same way? Want a way to group some together so only one is active at a time...
+Would be better if I made a subclass with the box and text with position so checking position is streamlined, but at this point that feels like too much work, so eh, next time...
+
+
+
+
+Currently crashes if 10..2 is entered where it expects number (2 decimal points). Should fix
+
+
+In future have config that imports nothing, variables that imports config and nothing else, and a built-in functions module (instead of putting them in 'variables' which was stupid)
+
+
+Way to make buttons better - make the Button class more generic that just does something on press
+    Then  make a subclass (or seperte class) called RadioButton that has a tie to other buttons (like with MutuallyExclusiveButtons) and a value associated with it.  The MutuallyExclusiveButtons class holds the value the buttons modify so when the button is pressed it just modifies the value stored in MutuallyExclusiveButtons
+        This reduces redundancy when currently making radio buttons of making a function over and over again to just modify one value to a specific thing
