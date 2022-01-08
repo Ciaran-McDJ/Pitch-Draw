@@ -181,6 +181,7 @@ class AxisControlPanel(SideScreenSuperClass):
         """Redraws the info screen"""
         variables.drawTextOnSurface(4,pygame.Vector2(self.xposOfxaxisBoxes,self.yposOfAxisTitles),"x-axis","blue") #have to multiply the x by 2 because I did a bad with units, whoopsie
         variables.drawTextOnSurface(4,pygame.Vector2(self.xposOfyaxisBoxes,self.yposOfAxisTitles),"y-axis","blue")
+        #TODO - would be good to write to user that smoothness should be more than or equal to 0 and lesss than 1   0<=smoothness<1
         
         for textBox in self.textBoxes:
             textBox.drawMe()

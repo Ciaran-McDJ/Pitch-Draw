@@ -43,7 +43,7 @@ class Stylus():
         elif variables.xaxisInput == config.axisControls.volume:
             self.pos.x = self.moveVolume(self.pos.x, variables.xaxisSmoothness, decibelVolume)
         elif variables.xaxisInput == config.axisControls.pitch:
-            self.pos.x = self.movePitch(self.pos.x, variables.xaxisSmoothness, pitch)
+            self.pos.x = self.movePitch(self.pos.x, variables.xaxisSmoothness, decibelVolume, pitch)
         else:
             print("uh, nothing is set to control the x-axis")
         
@@ -53,7 +53,7 @@ class Stylus():
         elif variables.yaxisInput == config.axisControls.volume:
             self.pos.y = self.moveVolume(self.pos.y, variables.yaxisSmoothness, decibelVolume)
         elif variables.yaxisInput == config.axisControls.pitch:
-            self.pos.y = self.movePitch(self.pos.y, variables.yaxisSmoothness, pitch)
+            self.pos.y = self.movePitch(self.pos.y, variables.yaxisSmoothness, decibelVolume, pitch)
         else:
             print("uh, nothing is set to control the y-axis")
         
@@ -78,18 +78,19 @@ class Stylus():
             expectedValueToMoveIfNoSmooth = 100 - (((decibelVolume-config.minDecibelToMove)/config.decibelsToCross)*100) #At minDecibelToMove value=100, at minDecibelToMove+decibelsToCross, value=0
         else:
             expectedValueToMoveIfNoSmooth = 100 #100 is bottom of screen
-        print("smoothness is: ", valueSmoothness)
-        print("expected xpos if no smoothness: ", valueToMove)
-        valueToMove = expectedValueToMoveIfNoSmooth*(1-valueSmoothness) + valueToMove*valueSmoothness #If smoothness not 0 this will make a difference weighting it towards where it already is to avoid jumpyness
-        print("actual new xpos: ", valueToMove)
+        valueToMove = expectedValueToMoveIfNoSmooth*(1-valueSmoothness) + valueToMove*valueSmoothness 
         
-        return valueToMove
+        return self.calcNewPosWithSmoothness(expectedValueToMoveIfNoSmooth, valueToMove, valueSmoothness)
     
-    def movePitch(self, valueToMove:float, valueSmoothness:float, pitch):
-        print("This isn't implemented yet, sorryyyyyyy")
-        return valueToMove
+    def movePitch(self, valueToMove:float, valueSmoothness:float, decibelVolume:float, pitch):
+        if decibelVolume >= config.minDecibelToMove: #So it doesn't move from background noise (could make a different value in config)    #TODO - currently crashes if mic is off - fix that
+            expectedValueToMoveIfNoSmooth = 100-pitch #TODO mak it good
+        else:
+            expectedValueToMoveIfNoSmooth = 100 #100 is bottom of screen
+        
+        return self.calcNewPosWithSmoothness(expectedValueToMoveIfNoSmooth, valueToMove, valueSmoothness)
     
     
-    # def calcNewPosWithSmoothness(self, expectedDestinationWithoutSmoothness:float, currentPosition:float, Smoothness:float):
-    #     return expectedDestinationWithoutSmoothness*(1-)
+    def calcNewPosWithSmoothness(self, expectedDestinationWithoutSmoothness:float, currentPosition:float, smoothness:float):
+        return expectedDestinationWithoutSmoothness*(1-smoothness) + currentPosition*smoothness #If smoothness not 0 this will make a difference weighting it towards where it already is to avoid jumpyness
         
