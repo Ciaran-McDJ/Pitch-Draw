@@ -31,7 +31,7 @@ def rms( data ):
         sum_squares += n*n
     return math.sqrt( sum_squares / count )
 
-def convertDataToPitch(data):
+def convertDataToPitch(data, return_all_data=False):
     """Converts the data from pyaudio to pitch (add unit in docstring)""" #TODO add unit in docstring
     count = len(data)/2
     format = "%dh"%(count)
@@ -42,7 +42,8 @@ def convertDataToPitch(data):
     highestLikelynessToBeCurrentPitch = max(listOfFourierOutputMagnitude)
     currentPitch = list(listOfFourierOutputMagnitude).index(highestLikelynessToBeCurrentPitch) #Grab the index of the pitch (higher index means higher pitch)
     # logarithmicpitch = 
-    
+    if return_all_data:
+        return currentPitch, listOfFourierOutputMagnitude
     return currentPitch #currently a value from 0 to the highest index of the list (seems to go to about 50)
 
 

@@ -1,3 +1,4 @@
+import math
 import pygame, pygame.image, pygame.draw
 from pygame import Vector2, transform
 import config
@@ -8,6 +9,7 @@ class Stylus():
     defaultScreen: pygame.Surface = variables.artDisplayedScreen #TO DO - this probably won't work, figure out how it works
     
     def __init__(self) -> None:
+        self.amp_phase = 0
         self.pos:Vector2 = Vector2(0,100) #The centers of the stylus
         self.size = config.stylusSize #Only used in self.draw to see if it's different than variables.stylusSize (to heck when the size changes)   - TODO - would be better if somehow variables could make a changeStylusSize function that deals with it all in one, not sure how to do that without import issues though...
         self.image = transform.scale(pygame.image.load(config.stylusImage),(round(config.UnitLengthToPixels(variables.stylusSize)),round(config.UnitLengthToPixels(variables.stylusSize))))
@@ -33,7 +35,20 @@ class Stylus():
     #         self.pos.x = 0
     #     pygame.draw.circle(variables.canvasScreen, self.paintColour, config.UnitLengthToPixels(self.pos), config.UnitLengthToPixels(self.size/2))
     
-    
+    def draw_freq_data(self, timeSinceLastRender: float, pitch_data):
+        # variables.canvasScreen.fill("black")
+        SCALE = 1e-4
+        WIDTH = 3
+        HUE_SPEED = 1e-3
+        self.amp_phase += timeSinceLastRender*HUE_SPEED
+        self.amp_phase %= 2*math.pi
+        r = math.cos(self.amp_phase) + 1
+        g = math.cos(self.amp_phase+2*math.pi/3) + 1
+        b = math.cos(self.amp_phase-2*math.pi/3) + 1
+        c = pygame.Color(int(r*127),int(g*127),int(b*127))
+        for idx,val in enumerate(pitch_data):
+            variables.canvasScreen.fill(c, pygame.Rect(idx*WIDTH, 0, WIDTH, val*SCALE))
+            
     # TODO to make this work need to pass it decibelValue and pitch from main loop, create xaxisControl & yaxisControl and have them set to the correct things. Probably a named tyuple that can only be "linearTime", "volume", or "pitch"
     def update(self, timeSinceLastRender:float, decibelVolume:float, pitch:float): #Not sure what pitch will be
         """update the stylus' position and draw on canvas"""

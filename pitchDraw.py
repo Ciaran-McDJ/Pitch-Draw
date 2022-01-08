@@ -46,7 +46,7 @@ def main():
         pyaudioData = myPyAudioStuff.stream.read(config.audioChunkSize) #TODO - make it take a variable amount so it can't fall behind
         currentrmsValue = myPyAudioStuff.rms(pyaudioData)
         currentDecibelValue = 20 * math.log10(currentrmsValue)
-        currentpitch = myPyAudioStuff.convertDataToPitch(pyaudioData)
+        currentpitch, pitch_data = myPyAudioStuff.convertDataToPitch(pyaudioData, return_all_data=True)
         print(currentpitch)
         # Now doing this in stylus' update function, can delete this section
         # if currentDecibelValue >= config.minDecibelToMove: #TODO - currently crashes if mic is off - fix that
@@ -58,6 +58,7 @@ def main():
         
         
         # update the position of the stylus
+        # stylus.draw_freq_data(timeSinceLastRender, pitch_data)
         stylus.update(timeSinceLastRender,currentDecibelValue,currentpitch)
         
         #update the info screen (might not need to do this every frame... maybe only when restarting? Oh no when data is being put in?)

@@ -7,7 +7,7 @@ import config
 #This module will be for drawing onto the control panel and controlling data on it
 
 
-COLOURS = ['snow', 'ghost white', 'white smoke', 'gainsboro', 'floral white', 'old lace',
+COLOURS = ['green', 'snow', 'ghost white', 'white smoke', 'gainsboro', 'floral white', 'old lace',
           'linen', 'antique white', 'papaya whip', 'blanched almond', 'bisque', 'peach puff',
           'navajo white', 'lemon chiffon', 'mint cream', 'azure', 'alice blue', 'lavender',
           'lavender blush', 'misty rose', 'dark slate gray', 'dim gray', 'slate gray',
@@ -123,7 +123,7 @@ class MainControlPanel(SideScreenSuperClass):
             pos=pygame.Vector2(5,50),
             textColour="blue",
             listOfTextBoxesToAddSelfTo=self.textBoxes,
-            validInputs="zxcvbnmasdfghjklqwertyuiopQWERTYUIOPASDFGHJKLZXCVBNM ",
+            validInputs="zxcvbnmasdfghjklqwertyuiopQWERTYUIOPASDFGHJKLZXCVBNM 1234567890",
             initialText=str(variables.stylusColour)
         )
         
