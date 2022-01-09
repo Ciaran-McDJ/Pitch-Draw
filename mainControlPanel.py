@@ -7,7 +7,7 @@ import config
 #This module will be for drawing onto the control panel and controlling data on it
 
 
-COLOURS = ['green', 'snow', 'ghost white', 'white smoke', 'gainsboro', 'floral white', 'old lace',
+COLOURS = ['green', 'white', 'snow', 'ghost white', 'white smoke', 'gainsboro', 'floral white', 'old lace',
           'linen', 'antique white', 'papaya whip', 'blanched almond', 'bisque', 'peach puff',
           'navajo white', 'lemon chiffon', 'mint cream', 'azure', 'alice blue', 'lavender',
           'lavender blush', 'misty rose', 'dark slate gray', 'dim gray', 'slate gray',
@@ -93,10 +93,7 @@ class MainControlPanel(SideScreenSuperClass):
     
     def initiateScreen(self):
         def stylusSizeBoxSubmit(input:str):
-            if input==None or input=="":
-                print("Oh no! I got None!")
-            else:
-                variables.stylusSize = float(input)
+            variables.stylusSize = float(input)
         stylusSizeBox = variables.TextBox(
             submitFunc=stylusSizeBoxSubmit,
             height=5,
@@ -110,9 +107,7 @@ class MainControlPanel(SideScreenSuperClass):
 
 
         def colourInputBoxSubmit(input:str):
-            if input == None:
-                print("oopsie, the textbox didn't get anything when you pressed enter")
-            elif input not in COLOURS:
+            if input not in COLOURS:
                 print("sorry, I don't recognize that name, please try a different colour")
             else:
                 variables.stylusColour = input

@@ -33,8 +33,15 @@ minDecibelToMove = -45
 """Above this value the cursor starts moving (to avoid noise being an issue)"""
 decibelsToCross = 25; 
 """The number of decibels to go from bottom to top"""
+
+minDecibelToRegisterPitch = -45
+"""above this volume will move based on pitch, if below volume position at 100 (to avoid background noise registering)"""
+pitchToCross = 100 #TODO - No clue what units are, add them   #Currently unused!!! Use it Ciaran!
+"""difference in pitch between position 100 and 0 (no clue what units are, should be added)"""
+
 audioChunkSize = 2000; 
 """The amount of bytes it takes per frame, too low and can fall behind and jumpy. Higher smoother but lower frame rate (waits for audio)"""
+
 
 
 #TextBox Stuff

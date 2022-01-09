@@ -16,7 +16,7 @@ canvasScreen.fill("white")
 artDisplayedScreen: pygame.Surface = mainScreen.subsurface((0,0,config.swidth,config.swidth))
 optionsScreen: pygame.Surface = mainScreen.subsurface((config.swidth,0,config.swidth*config.infoScreenWidth,config.swidth))
 
-
+#The variables past this point should probably have been in config, will do that better for future projects
 #Values for the stylus that other functions need access to
 stylusSize:float = config.stylusSize
 stylusColour:str = config.defaultPaintColour
@@ -112,9 +112,15 @@ class TextBox():
         TextBox.activeTextBox = self
         self.isactiveBox = True
     
+    def onSubmit(self):
+        if self.currentText == None or self.currentText == "": #Don't have to worry about the case it gets None (unless there's some case None is acceptable in which case whoops)
+            print("some button is getting None, please don't do that...")
+        else:
+            self.submitFunc(self.currentText)
+    
     def giveInput(self, newInput:str):
         if newInput == "\r":
-            self.submitFunc(self.currentText)
+            self.onSubmit()
         elif newInput == "\x08":
             self.currentText = self.currentText[:-1] #splices it so it removes the last character
         else:
@@ -151,7 +157,7 @@ class Button(): #Note if I were to rewrite this program this and textbox would b
     def __init__(self, pressFunc:"function", height:float, width:float, pos:pygame.Vector2, textColour:str, mutuallyExclusiveButtonsToAddSelfTo:"mutuallyExclusiveButtons", font:str=None, surfaceToBlitOn:pygame.Surface=optionsScreen, text:str=""):
         #Note that there will be some padding between the border and the text, the height represents the height of the box, not the height of the text
         #(this probably doesn't belong in __init__)Note that the box has a max width, if type more than that then the user won't be able to see it, TODO - implement side scrolling maybe? Not sure how that would work
-        self.pressFunc = pressFunc #func needs to have no arguments and call makeActiveButton on it's mutuallyExclusiveButtons object
+        self.pressFunc = pressFunc #func needs to have no arguments and call makeActiveButton on it's mutuallyExclusiveButtons object 
         self.height = height
         self.width = width #Note that the width is size relative to swidth, so on config screen 50 is max
         #Note that pos is percent swidth from top left of whatever screen blitting onto
@@ -197,6 +203,7 @@ class Button(): #Note if I were to rewrite this program this and textbox would b
             self.referenceToMutuallyExclusiveButtons.activeButton.isactiveBox = False
         self.isactiveBox = True
         self.referenceToMutuallyExclusiveButtons.activeButton = self
+    
 
 class mutuallyExclusiveButtons():
     """class where each object holds a group of buttons where only one can be active at a time"""

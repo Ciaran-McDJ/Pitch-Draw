@@ -98,8 +98,8 @@ class Stylus():
         return self.calcNewPosWithSmoothness(expectedValueToMoveIfNoSmooth, valueToMove, valueSmoothness)
     
     def movePitch(self, valueToMove:float, valueSmoothness:float, decibelVolume:float, pitch):
-        if decibelVolume >= config.minDecibelToMove: #So it doesn't move from background noise (could make a different value in config)    #TODO - currently crashes if mic is off - fix that
-            expectedValueToMoveIfNoSmooth = 100-pitch #TODO mak it good
+        if decibelVolume >= config.minDecibelToRegisterPitch: #So it doesn't move from background noise (could make a different value in config)    #TODO - currently crashes if mic is off - fix that
+            expectedValueToMoveIfNoSmooth = 100-(pitch/config.pitchToCross)*100 #TODO make min pitch? make any other changes so it's actually good
         else:
             expectedValueToMoveIfNoSmooth = 100 #100 is bottom of screen
         

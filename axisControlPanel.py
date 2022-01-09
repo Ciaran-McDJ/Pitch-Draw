@@ -6,18 +6,37 @@ from sideScreenSuperClass import SideScreenSuperClass
 
 class AxisControlPanel(SideScreenSuperClass):
     """side screen for choosing the input method and smoothness of the  and y axis"""
+    colourOfAxisSpecificText = "blue"
+    colourOfInfoText = "white"
+    colourOfGeneralBoxText = "white"
     
     widthOfBoxes = 20
+    widthOfHalfScreenNonAxisSpecificBoxes = 22
+    widthOfFullWidthBoxes = 46
     heightOfBoxes = 5
+    heightOfText = 4
     
     xposOfxaxisBoxes = 3
+    xposOfLeftSideNonSpecificBoxes = 2
     xposOfyaxisBoxes = 28
+    xposOfRightSideNonSpecificBoxes = 27
+    xposOfgeneralBoxes = 2
     
-    yposOfAxisTitles = 5
-    yposOfLinearTimeBoxes = 15
-    yposOfVolumeBoxes = 25
-    yposOfPitchBoxes = 35
-    yposOfSmoothnessBoxes = 50
+    
+    yposOfAxisTitles = 2
+    yposOfLinearTimeBoxes = 10
+    yposOfSpeedBoxDescription = 16 #To control LinearTime movement
+    yposOfSpeedBox = 20
+    yposOfVolumeBoxes = 30
+    yposOfVolumeControlBoxesDescription = 36 #min decibels to move and decibels to cross
+    yposOfVolumeControlBoxes = 40
+    yposOfPitchBoxes = 50
+    yposOfPitchControlBoxesDescription = 56
+    yposOfPitchControlBoxes = 60
+    yposOfSmoothnessTextDescription = 75
+    yposOfSmoothnessBoxes = 80
+    
+
     
     
     
@@ -33,35 +52,95 @@ class AxisControlPanel(SideScreenSuperClass):
         self.groupsOfMutuallyExclusiveButtons.append(self.goBackButtons)
     
     def initiateScreen(self):
-        #First 2 text boxes for smoothness
+        #These boxes have controls for specific input types
+        def speedBoxSubmit(input:str):
+            config.stylusSpeed = float(input)
+        speedBox = variables.TextBox(
+            submitFunc= speedBoxSubmit,
+            height= self.heightOfBoxes,
+            width= self.widthOfFullWidthBoxes,
+            pos= pygame.Vector2(self.xposOfgeneralBoxes,self.yposOfSpeedBox),
+            textColour= self.colourOfGeneralBoxText,
+            listOfTextBoxesToAddSelfTo= self.textBoxes,
+            validInputs= "1234567890.", #TODO - Currently can't be negative but could add that
+            initialText= str(config.stylusSpeed) 
+        )
+        
+        def minDecibelsToMoveBoxSubmit(input:str):
+            config.minDecibelToMove = float(input)
+        minDecibelToMoveBox = variables.TextBox(
+            submitFunc= minDecibelsToMoveBoxSubmit,
+            height= self.heightOfBoxes,
+            width= self.widthOfHalfScreenNonAxisSpecificBoxes, 
+            pos= pygame.Vector2(self.xposOfLeftSideNonSpecificBoxes,self.yposOfVolumeControlBoxes),
+            textColour= self.colourOfGeneralBoxText,
+            listOfTextBoxesToAddSelfTo= self.textBoxes,
+            validInputs= "1234567890.-",
+            initialText= str(config.minDecibelToMove) 
+        )
+        
+        def decibelsToCrossBoxSubmit(input:str):
+            config.decibelsToCross = float(input)
+        decibelsToCrossBox = variables.TextBox(
+            submitFunc= decibelsToCrossBoxSubmit,
+            height= self.heightOfBoxes,
+            width= self.widthOfHalfScreenNonAxisSpecificBoxes, 
+            pos= pygame.Vector2(self.xposOfRightSideNonSpecificBoxes,self.yposOfVolumeControlBoxes),
+            textColour= self.colourOfGeneralBoxText,
+            listOfTextBoxesToAddSelfTo= self.textBoxes,
+            validInputs= "1234567890.",
+            initialText= str(config.decibelsToCross) 
+        )
+        
+        def minDecibelToRegisterPitchBoxSubmit(input:str):
+            config.minDecibelToRegisterPitch = float(input)
+        minDecibelToRegisterPitchBox = variables.TextBox(
+            submitFunc= minDecibelToRegisterPitchBoxSubmit,
+            height= self.heightOfBoxes,
+            width= self.widthOfHalfScreenNonAxisSpecificBoxes, 
+            pos= pygame.Vector2(self.xposOfLeftSideNonSpecificBoxes,self.yposOfPitchControlBoxes),
+            textColour= self.colourOfGeneralBoxText,
+            listOfTextBoxesToAddSelfTo= self.textBoxes,
+            validInputs= "1234567890.-",
+            initialText= str(config.minDecibelToRegisterPitch) 
+        )
+        
+        def pitchToCrossBoxSubmit(input:str):
+            config.pitchToCross = float(input)
+        pitchToCrossBox = variables.TextBox(
+            submitFunc= pitchToCrossBoxSubmit,
+            height= self.heightOfBoxes,
+            width= self.widthOfHalfScreenNonAxisSpecificBoxes, 
+            pos= pygame.Vector2(self.xposOfRightSideNonSpecificBoxes,self.yposOfPitchControlBoxes),
+            textColour= self.colourOfGeneralBoxText,
+            listOfTextBoxesToAddSelfTo= self.textBoxes,
+            validInputs= "1234567890.",
+            initialText= str(config.pitchToCross) 
+        )
+        
+        #Then 2 text boxes for smoothness for each axis
         def xaxisSmoothnessBoxSubmit(input:str):
-            if input==None or input=="":
-                print("Oh no! xaxis smoothness box got None!")
-            else:
-                variables.xaxisSmoothness = float(input)
-                print("smoothness for x input should be updated")
+            variables.xaxisSmoothness = float(input)
+            print("smoothness for x input should be updated")
         xaxisSmoothnessBox = variables.TextBox(
             submitFunc= xaxisSmoothnessBoxSubmit,
             height= self.heightOfBoxes,
             width= self.widthOfBoxes,
             pos= pygame.Vector2(self.xposOfxaxisBoxes,self.yposOfSmoothnessBoxes),
-            textColour= "blue",
+            textColour= self.colourOfAxisSpecificText,
             listOfTextBoxesToAddSelfTo= self.textBoxes,
             validInputs= "1234567890.",
             initialText= str(variables.xaxisSmoothness)
         )
         
         def yaxisSmoothnessBoxSubmit(input:str):
-            if input==None or input=="":
-                print("Oh no! xaxis smoothness box got None!")
-            else:
-                variables.yaxisSmoothness = float(input)
+            variables.yaxisSmoothness = float(input)
         xaxisSmoothnessBox = variables.TextBox(
             submitFunc= yaxisSmoothnessBoxSubmit,
             height= self.heightOfBoxes,
             width= self.widthOfBoxes,
             pos= pygame.Vector2(self.xposOfyaxisBoxes,self.yposOfSmoothnessBoxes),
-            textColour= "blue",
+            textColour= self.colourOfAxisSpecificText,
             listOfTextBoxesToAddSelfTo= self.textBoxes,
             validInputs= "1234567890.",
             initialText= str(variables.yaxisSmoothness)
@@ -78,7 +157,7 @@ class AxisControlPanel(SideScreenSuperClass):
             height= self.heightOfBoxes,
             width= self.widthOfBoxes,
             pos= pygame.Vector2(self.xposOfxaxisBoxes,self.yposOfLinearTimeBoxes),
-            textColour= "blue",
+            textColour= self.colourOfAxisSpecificText,
             mutuallyExclusiveButtonsToAddSelfTo= self.xaxisInputButtons,
             text= "Linear Time"
         )
@@ -93,7 +172,7 @@ class AxisControlPanel(SideScreenSuperClass):
             height= self.heightOfBoxes,
             width= self.widthOfBoxes,
             pos= pygame.Vector2(self.xposOfxaxisBoxes,self.yposOfPitchBoxes),
-            textColour= "blue",
+            textColour= self.colourOfAxisSpecificText,
             mutuallyExclusiveButtonsToAddSelfTo= self.xaxisInputButtons,
             text= "Pitch"
         )
@@ -108,7 +187,7 @@ class AxisControlPanel(SideScreenSuperClass):
             height= self.heightOfBoxes,
             width= self.widthOfBoxes,
             pos= pygame.Vector2(self.xposOfxaxisBoxes,self.yposOfVolumeBoxes),
-            textColour= "blue",
+            textColour= self.colourOfAxisSpecificText,
             mutuallyExclusiveButtonsToAddSelfTo= self.xaxisInputButtons,
             text= "Volume"
         )
@@ -124,7 +203,7 @@ class AxisControlPanel(SideScreenSuperClass):
             height= self.heightOfBoxes,
             width= self.widthOfBoxes,
             pos= pygame.Vector2(self.xposOfyaxisBoxes,self.yposOfLinearTimeBoxes),
-            textColour= "blue",
+            textColour= self.colourOfAxisSpecificText,
             mutuallyExclusiveButtonsToAddSelfTo= self.yaxisInputButtons,
             text= "Linear Time"
         )
@@ -139,7 +218,7 @@ class AxisControlPanel(SideScreenSuperClass):
             height= self.heightOfBoxes,
             width= self.widthOfBoxes,
             pos= pygame.Vector2(self.xposOfyaxisBoxes,self.yposOfPitchBoxes),
-            textColour= "blue",
+            textColour= self.colourOfAxisSpecificText,
             mutuallyExclusiveButtonsToAddSelfTo= self.yaxisInputButtons,
             text= "Pitch"
         )
@@ -154,7 +233,7 @@ class AxisControlPanel(SideScreenSuperClass):
             height= self.heightOfBoxes,
             width= self.widthOfBoxes,
             pos= pygame.Vector2(self.xposOfyaxisBoxes,self.yposOfVolumeBoxes),
-            textColour= "blue",
+            textColour= self.colourOfAxisSpecificText,
             mutuallyExclusiveButtonsToAddSelfTo= self.yaxisInputButtons,
             text= "Volume"
         )
@@ -179,8 +258,15 @@ class AxisControlPanel(SideScreenSuperClass):
     
     def update(self):
         """Redraws the info screen"""
-        variables.drawTextOnSurface(4,pygame.Vector2(self.xposOfxaxisBoxes,self.yposOfAxisTitles),"x-axis","blue") #have to multiply the x by 2 because I did a bad with units, whoopsie
-        variables.drawTextOnSurface(4,pygame.Vector2(self.xposOfyaxisBoxes,self.yposOfAxisTitles),"y-axis","blue")
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfxaxisBoxes,self.yposOfAxisTitles),"x-axis",self.colourOfAxisSpecificText) #have to multiply the x by 2 because I did a bad with units, whoopsie
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfyaxisBoxes,self.yposOfAxisTitles),"y-axis",self.colourOfAxisSpecificText)
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfgeneralBoxes, self.yposOfSpeedBoxDescription), "how fast should the brush move?", self.colourOfInfoText)
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfLeftSideNonSpecificBoxes, self.yposOfVolumeControlBoxesDescription), "min dBel", self.colourOfInfoText)
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfRightSideNonSpecificBoxes, self.yposOfVolumeControlBoxesDescription), "dBels to cross", self.colourOfInfoText)
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfLeftSideNonSpecificBoxes, self.yposOfPitchControlBoxesDescription), "min dBel to move", self.colourOfInfoText)
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfRightSideNonSpecificBoxes, self.yposOfPitchControlBoxesDescription), "pitch to cross", self.colourOfInfoText)
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfgeneralBoxes, self.yposOfSmoothnessTextDescription), "axis smoothness (between 0 and 1)", self.colourOfAxisSpecificText)
+        
         #TODO - would be good to write to user that smoothness should be more than or equal to 0 and lesss than 1   0<=smoothness<1
         
         for textBox in self.textBoxes:
