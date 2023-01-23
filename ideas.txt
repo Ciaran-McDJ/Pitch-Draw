@@ -52,3 +52,18 @@ In future have config that imports nothing, variables that imports config and no
 Way to make buttons better - make the Button class more generic that just does something on press
     Then  make a subclass (or seperte class) called RadioButton that has a tie to other buttons (like with MutuallyExclusiveButtons) and a value associated with it.  The MutuallyExclusiveButtons class holds the value the buttons modify so when the button is pressed it just modifies the value stored in MutuallyExclusiveButtons
         This reduces redundancy when currently making radio buttons of making a function over and over again to just modify one value to a specific thing
+
+
+Would be fun to add button to make all UI colours change colour continously through spectrum to be pretty
+
+
+Should change colour selection so it checks if it's gonna throw an error (instead of stupid giant list) to check if a colour is valid
+
+
+Could add Opacity of paint brush (alpha value of circle being drawn)
+
+
+Stuff to add control from UI:
+    Audio Chunk size
+    Colour selection from rgb values
+    Screen Size

@@ -86,6 +86,33 @@ COLOURS = ['green', 'white', 'snow', 'ghost white', 'white smoke', 'gainsboro', 
 
 class MainControlPanel(SideScreenSuperClass):
     """The original control panel for while-painting actions and has buttons to go to other more detailed panels"""
+    
+    colourOfInfoText = "blue"
+    colourOfTextBoxText = "blue"
+    colourOfGoToOtherScreenButtonText = "yellow"
+    
+    widthOfBoxes = 40
+    heightOfBoxes = 5
+    heightOfText = 4
+    heightOfGoingToOtherScreenButton = 3
+    heightOfCOLOURTitle = 6
+    
+    xposOfTextBoxes = 5
+    xposOfInfoText = 5
+    xposOfGoingToOtherScreenButton = 5
+    xposOfCOLOURTitle = 2
+    
+    yposOfStylusSizeBoxDescription = 5
+    yposOfStylusSizeBox = 10
+    yposOfCOLOURTitle = 20
+    yposOfColourInputBoxDescription = 30
+    yposOfColourInputBox = 35
+    yposOfGoingToAxisControlScreenButton = 90
+    
+    
+    
+    
+    
     def __init__(self) -> None:
         super().__init__()
         self.controlPanelButtons = variables.mutuallyExclusiveButtons()
@@ -96,10 +123,10 @@ class MainControlPanel(SideScreenSuperClass):
             variables.stylusSize = float(input)
         stylusSizeBox = variables.TextBox(
             submitFunc=stylusSizeBoxSubmit,
-            height=5,
-            width=40,
-            pos=pygame.Vector2(5,30),
-            textColour="blue",
+            height=self.heightOfBoxes,
+            width=self.widthOfBoxes,
+            pos=pygame.Vector2(self.xposOfTextBoxes,self.yposOfStylusSizeBox),
+            textColour=self.colourOfTextBoxText,
             listOfTextBoxesToAddSelfTo=self.textBoxes,
             validInputs="1234567890.",
             initialText=str(variables.stylusSize)
@@ -113,10 +140,10 @@ class MainControlPanel(SideScreenSuperClass):
                 variables.stylusColour = input
         colourInputBox = variables.TextBox(
             submitFunc=colourInputBoxSubmit,
-            height=5,
-            width=40,
-            pos=pygame.Vector2(5,50),
-            textColour="blue",
+            height=self.heightOfBoxes,
+            width=self.widthOfBoxes,
+            pos=pygame.Vector2(self.xposOfTextBoxes,self.yposOfColourInputBox),
+            textColour=self.colourOfTextBoxText,
             listOfTextBoxesToAddSelfTo=self.textBoxes,
             validInputs="zxcvbnmasdfghjklqwertyuiopQWERTYUIOPASDFGHJKLZXCVBNM 1234567890",
             initialText=str(variables.stylusColour)
@@ -129,10 +156,10 @@ class MainControlPanel(SideScreenSuperClass):
             variables.activeSideScreen.initiateScreen()         
         goToAxisControlPanelButtton = variables.Button(
             pressFunc= onGoToAxisControlPanelButttonPressed,
-            height= 3,
-            width= 40,
-            pos= pygame.Vector2(5,90),
-            textColour= "yellow",
+            height= self.heightOfGoingToOtherScreenButton,
+            width= self.widthOfBoxes,
+            pos= pygame.Vector2(self.xposOfGoingToOtherScreenButton,self.yposOfGoingToAxisControlScreenButton),
+            textColour= self.colourOfGoToOtherScreenButtonText,
             mutuallyExclusiveButtonsToAddSelfTo= self.controlPanelButtons,
             text= "press me to change axis inputs"
         )
@@ -140,8 +167,9 @@ class MainControlPanel(SideScreenSuperClass):
     
     def update(self):
         """Redraws the info screen"""
-        variables.drawTextOnSurface(4,pygame.Vector2(5,25),"paint brush size","blue")
-        variables.drawTextOnSurface(4,pygame.Vector2(5,45),"paint brush colour","blue")
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfInfoText,self.yposOfStylusSizeBoxDescription),"paint brush size","blue")
+        variables.drawTextOnSurface(self.heightOfCOLOURTitle,pygame.Vector2(self.xposOfCOLOURTitle,self.yposOfCOLOURTitle),"COLOUR SELECTION","blue")
+        variables.drawTextOnSurface(self.heightOfText,pygame.Vector2(self.xposOfInfoText,self.yposOfColourInputBoxDescription),"paint brush colour in words","blue")
         
         for textBox in self.textBoxes:
             textBox.drawMe()

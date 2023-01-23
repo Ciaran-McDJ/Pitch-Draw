@@ -58,8 +58,12 @@ def main():
         
         
         # update the position of the stylus
-        # stylus.draw_freq_data(timeSinceLastRender, pitch_data)
-        stylus.update(timeSinceLastRender,currentDecibelValue,currentpitch)
+        
+        #Tadhg's fun thing #TODO add constant that uses this
+        stylus.draw_freq_data(timeSinceLastRender, pitch_data)
+        
+        
+        # stylus.update(timeSinceLastRender,currentDecibelValue,currentpitch)
         
         #update the info screen (might not need to do this every frame... maybe only when restarting? Oh no when data is being put in?)
         variables.optionsScreen.fill("black")

@@ -6,6 +6,7 @@ from sideScreenSuperClass import SideScreenSuperClass
 
 class AxisControlPanel(SideScreenSuperClass):
     """side screen for choosing the input method and smoothness of the  and y axis"""
+    
     colourOfAxisSpecificText = "blue"
     colourOfInfoText = "white"
     colourOfGeneralBoxText = "white"
@@ -117,6 +118,8 @@ class AxisControlPanel(SideScreenSuperClass):
             validInputs= "1234567890.",
             initialText= str(config.pitchToCross) 
         )
+        
+        #TODO - add box to modify minimum pitch
         
         #Then 2 text boxes for smoothness for each axis
         def xaxisSmoothnessBoxSubmit(input:str):

@@ -34,12 +34,14 @@ minDecibelToMove = -45
 decibelsToCross = 25; 
 """The number of decibels to go from bottom to top"""
 
-minDecibelToRegisterPitch = -45
+minDecibelToRegisterPitch = -35
 """above this volume will move based on pitch, if below volume position at 100 (to avoid background noise registering)"""
-pitchToCross = 100 #TODO - No clue what units are, add them   #Currently unused!!! Use it Ciaran!
+pitchToCross = 1000 #TODO - No clue what units are, add them
 """difference in pitch between position 100 and 0 (no clue what units are, should be added)"""
+minPitch = 200
+"""when input method is pitch this pitch will be the bottom"""
 
-audioChunkSize = 2000; 
+audioChunkSize = 1000; 
 """The amount of bytes it takes per frame, too low and can fall behind and jumpy. Higher smoother but lower frame rate (waits for audio)"""
 
 

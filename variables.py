@@ -27,7 +27,7 @@ activeSideScreen = None
 
 # Variables for axes
 xaxisSmoothness = 0.8 #Value between 0 and 1, 0 no effect, 1 is no movement at all (is slowing for constant time)
-yaxisSmoothness = 0.8
+yaxisSmoothness = 0.0
 
 
 xaxisInput:config.axisControls = config.axisControls.linearTime
